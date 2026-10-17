@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>ShadowNet | Honeypot Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div><strong>SHADOWNET</strong><span>HONEYPOT MONITOR</span></div>
+      </div>
+      <div class="side-label">MONITORING</div>
+      <a class="nav-link active" href="#overview"><span>◈</span> Overview</a>
+      <a class="nav-link" href="#events"><span>▤</span> Event log</a>
+      <a class="nav-link" href="#analytics"><span>⌁</span> Analytics</a>
+      <a class="nav-link" href="#analysis"><span>⌘</span> C++ analysis</a>
+      <div class="sidebar-bottom">
+        <div class="local-pill"><span class="dot"></span> LOCALHOST ONLY</div>
+        <p>Defensive monitoring lab<br>Runs on this computer</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">SECURITY OPERATIONS / LOCAL LAB</div>
+          <h1>Honeypot Overview</h1>
+          <p class="subheading">Monitor recorded events and inspect local connection activity.</p>
+        </div>
+        <div class="top-status"><span id="statusDot" class="dot"></span><span id="statusText">Checking status…</span></div>
+      </header>
+
+      <section id="overview" class="control-panel panel">
+        <div class="control-copy">
+          <div class="eyebrow">SENSOR CONTROL</div>
+          <h2>TCP Honeypot</h2>
+          <p>Listener: <code id="listenerAddress">{{ host }}:{{ default_port }}</code></p>
+          <p class="muted">The dashboard binds to 127.0.0.1 and does not expose this service to the network.</p>
+        </div>
+        <div class="control-actions">
+          <button id="startBtn" class="btn btn-primary">▶ Start honeypot</button>
+          <button id="stopBtn" class="btn btn-danger" disabled>■ Stop</button>
+          <div class="port-control">
+            <label for="portInput">Listener port</label>
+            <input id="portInput" type="number" min="1024" max="65535" value="{{ default_port }}">
+            <button id="savePortBtn" class="btn btn-secondary">Apply</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="stat-grid">
+        <article class="stat-card panel"><div class="stat-top"><span>Total events</span><span class="stat-icon blue">▤</span></div><strong id="totalEvents">0</strong><small>Rows in events.csv</small></article>
+        <article class="stat-card panel"><div class="stat-top"><span>Connections</span><span class="stat-icon purple">⌁</span></div><strong id="totalConnections">0</strong><small>Recorded connection events</small></article>
+        <article class="stat-card panel"><div class="stat-top"><span>Unique IPs</span><span class="stat-icon green">◎</span></div><strong id="uniqueIps">0</strong><small>Across connection events</small></article>
+        <article class="stat-card panel"><div class="stat-top"><span>Sensor status</span><span class="stat-icon amber">◉</span></div><strong id="sensorStat">Offline</strong><small id="refreshLabel">Auto-refreshing every 5 seconds</small></article>
+      </section>
+
+      <section id="analytics" class="content-grid">
+        <article class="panel chart-panel">
+          <div class="section-heading"><div><h2>Event activity</h2><p>Events grouped by hour, based on timestamps in your CSV.</p></div><span class="tag">CSV DATA</span></div>
+          <div id="hourChart" class="bar-chart"><div class="empty-state">Waiting for timestamped events…</div></div>
+        </article>
+        <article class="panel ip-panel">
+          <div class="section-heading"><div><h2>Top source IPs</h2><p>Most frequent connection sources.</p></div></div>
+          <div id="ipList" class="ip-list"><div class="empty-state">No connections recorded yet.</div></div>
+        </article>
+      </section>
+
+      <section id="events" class="panel table-panel">
+        <div class="section-heading table-heading">
+          <div><h2>Recent event log</h2><p>Latest 100 rows from events.csv. Message contents are not displayed.</p></div>
+          <div class="table-tools"><input id="eventFilter" type="search" placeholder="Filter IP or event…"><button id="refreshBtn" class="btn btn-secondary">↻ Refresh</button></div>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>TIMESTAMP</th><th>SOURCE IP</th><th>EVENT</th><th>BYTES</th></tr></thead>
+          <tbody id="eventRows"><tr><td colspan="4" class="empty-state">Loading events…</td></tr></tbody></table>
+        </div>
+        <div class="table-footer"><span id="eventCount">0 events shown</span><span>Source: events.csv</span></div>
+      </section>
+
+      <section id="analysis" class="panel analyzer-panel">
+        <div class="section-heading"><div><h2>C++ analyzer</h2><p>Run your compiled analyzer against the same events.csv file.</p></div><button id="analyzeBtn" class="btn btn-primary">Run analysis</button></div>
+        <pre id="analyzerOutput" class="terminal-output">Ready. Click “Run analysis” to execute analyzer.exe.</pre>
+      </section>
+
+      <footer><span>SHADOWNET / LOCAL DEFENSIVE LAB</span><span>Keep this dashboard on localhost.</span></footer>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
